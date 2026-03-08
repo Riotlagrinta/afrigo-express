@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Configuration pour forcer le mode sombre basé sur les classes (compatible Tailwind v4 + next-themes) */
 @custom-variant dark (&:is(.dark *));
 
 @theme {
@@ -10,32 +9,41 @@
   --color-primary-500: #3b82f6;
   --color-primary-600: #2563eb;
   --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
   
   --color-accent-400: #fbbf24;
   --color-accent-500: #f59e0b;
   --color-accent-600: #d97706;
+
+  /* Couleurs de fond sémantiques pour un contrôle précis */
+  --color-bg-main: var(--bg-main);
+  --color-bg-card: var(--bg-card);
+  --color-border-ui: var(--border-ui);
+}
+
+:root {
+  --bg-main: #f8fafc; /* Slate 50 */
+  --bg-card: #ffffff;
+  --border-ui: rgba(226, 232, 240, 0.8); /* Slate 200 */
+}
+
+.dark {
+  /* On évite le noir pur, on part sur un Charcoal/Navy très profond */
+  --bg-main: #0f172a; /* Slate 950 */
+  --bg-card: #1e293b; /* Slate 800 */
+  --border-ui: rgba(51, 65, 85, 0.5); /* Slate 700 */
 }
 
 @layer base {
   body {
-    @apply antialiased text-slate-800 bg-slate-50 dark:text-slate-200 dark:bg-[#050505];
+    @apply antialiased text-slate-800 dark:text-slate-200 bg-bg-main transition-colors duration-500;
     scroll-behavior: smooth;
   }
-  
-  ::selection {
-    @apply bg-primary-500/30 text-primary-900 dark:text-primary-100;
-  }
 }
 
-@utility text-gradient {
-  @apply bg-clip-text text-transparent bg-gradient-to-r;
+@utility glass-nav {
+  @apply bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-border-ui;
 }
 
-@utility glass-panel {
-  @apply bg-white/70 dark:bg-[#0a0a0a]/70 backdrop-blur-xl border border-slate-200/50 dark:border-white/[0.08];
-}
-
-@utility glass-card {
-  @apply bg-white dark:bg-[#0f0f0f] border border-slate-200 dark:border-white/[0.08] shadow-sm dark:shadow-none;
+@utility premium-card {
+  @apply bg-bg-card border border-border-ui shadow-sm dark:shadow-2xl dark:shadow-black/20 rounded-[2rem];
 }
