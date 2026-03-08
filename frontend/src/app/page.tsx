@@ -24,17 +24,19 @@ export default function Home() {
       {/* Navbar */}
       <header className="fixed top-0 w-full z-50 glass-nav transition-all h-20 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-56 h-14 transition-transform duration-300 group-hover:scale-105">
-              {/* Votre logo personnalisé ici */}
+          <Link href="/" className="flex items-center gap-4 group">
+            <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-110">
               <Image 
                 src="/brand/logo.jpeg" 
                 alt="Afrigo Express Logo" 
                 fill
-                className="object-contain dark:brightness-110"
+                className="object-contain rounded-lg"
                 priority
               />
             </div>
+            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
+              AFRIGO<span className="text-accent-500">EXPRESS</span>
+            </span>
           </Link>
           
           <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600 dark:text-slate-400">
@@ -201,13 +203,18 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <Link href="/" className="relative w-40 h-10">
-            <Image 
-              src="/brand/logo.jpeg" 
-              alt="Afrigo Express Logo" 
-              fill
-              className="object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all dark:brightness-200"
-            />
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="relative w-8 h-8 opacity-60 group-hover:opacity-100 transition-all">
+              <Image 
+                src="/brand/logo.jpeg" 
+                alt="Afrigo Express Logo" 
+                fill
+                className="object-contain rounded-md"
+              />
+            </div>
+            <span className="font-bold tracking-tight text-slate-900 dark:text-white">
+              AFRIGO<span className="text-slate-400 dark:text-slate-600">EXPRESS</span>
+            </span>
           </Link>
           <p className="text-xs font-medium text-slate-500">
             © {new Date().getFullYear()} Afrigo Express. Propulsé par Kelvix.
