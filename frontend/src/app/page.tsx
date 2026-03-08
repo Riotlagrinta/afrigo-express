@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { 
-  Package, 
+  Package,
   MapPin, 
   CreditCard, 
   Clock, 
@@ -17,12 +17,9 @@ import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
-    <div className="min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-500 overflow-hidden">
-      {/* Background Ambience */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50/50 to-white dark:from-slate-900/50 dark:to-slate-950"></div>
-      
+    <div className="min-h-screen font-sans text-slate-700 dark:text-slate-200 transition-colors duration-500 overflow-hidden bg-bg-main">
       {/* Navbar */}
-      <header className="fixed top-0 w-full z-50 glass-nav transition-all h-20 flex items-center">
+      <header className="fixed top-0 w-full z-50 glass-nav transition-all h-20 flex items-center shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-4 group">
             <div className="relative w-12 h-12 transition-transform duration-300 group-hover:scale-110">
@@ -34,12 +31,12 @@ export default function Home() {
                 priority
               />
             </div>
-            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-              AFRIGO<span className="text-accent-500">EXPRESS</span>
+            <span className="font-bold text-xl tracking-tight text-slate-800 dark:text-white">
+              AFRIGO<span className="text-accent-600 dark:text-accent-500">EXPRESS</span>
             </span>
           </Link>
           
-          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600 dark:text-slate-400">
+          <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-500 dark:text-slate-400">
             <Link href="#services" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Services</Link>
             <Link href="#suivi" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Suivi Colis</Link>
             <Link href="#entreprise" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Entreprises</Link>
@@ -48,7 +45,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <div className="hidden sm:block w-px h-6 bg-slate-200 dark:bg-slate-800"></div>
-            <button className="bg-slate-900 dark:bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/10 flex items-center gap-2">
+            <button className="bg-slate-900 dark:bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg flex items-center gap-2">
               Expédier
               <ArrowRight size={16} />
             </button>
@@ -67,7 +64,7 @@ export default function Home() {
               transition={{ duration: 0.8 }}
               className="max-w-2xl relative z-10 text-center lg:text-left"
             >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-medium text-xs mb-8 shadow-sm">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-slate-800 border border-border-ui text-slate-600 dark:text-slate-300 font-medium text-xs mb-8">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-accent-500"></span>
@@ -77,17 +74,16 @@ export default function Home() {
               
               <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] mb-8 text-slate-900 dark:text-white">
                 La logistique <br className="hidden lg:block"/>
-                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-500 dark:from-primary-400 dark:to-accent-400">
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-accent-600 dark:from-primary-400 dark:to-accent-500">
                   intelligente
                 </span> au Togo.
               </h1>
               
               <p className="text-lg text-slate-600 dark:text-slate-400 mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed font-light">
-                Expédiez, suivez et recevez vos colis en toute sérénité. Afrigo Express offre un suivi GPS précis et une transparence totale.
+                Expédiez, suivez et recevez vos colis en toute sérénité avec Afrigo Express.
               </p>
               
-              {/* Tracking Input */}
-              <div className="premium-card p-2.5 flex items-center max-w-md w-full mx-auto lg:mx-0 focus-within:ring-2 focus-within:ring-primary-500/30 transition-all">
+              <div className="premium-card p-2.5 flex items-center max-w-md w-full mx-auto lg:mx-0 focus-within:ring-2 focus-within:ring-primary-500/30 transition-all bg-white">
                 <div className="pl-4 text-slate-400 dark:text-slate-500">
                   <MapPin size={22} />
                 </div>
@@ -107,7 +103,7 @@ export default function Home() {
                   Sécurisé
                 </div>
                 <div className="flex items-center gap-2">
-                  <Clock className="text-accent-500" size={18} />
+                  <Clock className="text-accent-600 dark:text-accent-500" size={18} />
                   Express
                 </div>
               </div>
@@ -120,11 +116,8 @@ export default function Home() {
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative hidden lg:block"
             >
-               <div className="premium-card aspect-square w-full p-2 relative overflow-hidden bg-white/50 dark:bg-slate-800/30">
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-500/5 to-transparent"></div>
-                  
-                  <div className="w-full h-full border border-slate-100 dark:border-slate-700/50 rounded-[1.8rem] relative flex items-center justify-center overflow-hidden bg-white dark:bg-slate-900">
-                     <div className="absolute w-[80%] h-[80%] border border-slate-100 dark:border-slate-800 rounded-full animate-pulse"></div>
+               <div className="premium-card aspect-square w-full p-2 relative overflow-hidden bg-white/30 dark:bg-slate-800/20">
+                  <div className="w-full h-full border border-border-ui rounded-[1.8rem] relative flex items-center justify-center overflow-hidden bg-white dark:bg-slate-900 shadow-inner">
                      <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white shadow-2xl shadow-primary-500">
                         <MapPin size={24} />
                      </div>
@@ -135,12 +128,11 @@ export default function Home() {
         </section>
 
         {/* Features Section */}
-        <section id="services" className="py-24 relative bg-white dark:bg-slate-900/50">
+        <section id="services" className="py-24 relative bg-white/40 dark:bg-slate-900/40 border-y border-border-ui">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-primary-600 font-bold uppercase text-xs tracking-widest mb-4">Fonctionnalités</h2>
-              <h3 className="text-3xl md:text-4xl font-extrabold mb-6 text-slate-900 dark:text-white">Optimisé pour la rapidité.</h3>
-              <p className="text-slate-600 dark:text-slate-400 text-lg">Nous utilisons la technologie pour simplifier vos envois au Togo.</p>
+              <h3 className="text-3xl md:text-4xl font-extrabold mb-6">Optimisé pour la rapidité.</h3>
             </div>
 
             <div className="grid md:grid-cols-3 gap-8">
@@ -167,12 +159,12 @@ export default function Home() {
                   bg: "bg-accent-50 dark:bg-accent-900/20"
                 }
               ].map((feature, idx) => (
-                <div key={idx} className="premium-card p-10 hover:shadow-xl transition-all duration-300">
+                <div key={idx} className="premium-card p-10 hover:-translate-y-1 transition-all duration-300">
                   <div className={`w-14 h-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-8`}>
                     {feature.icon}
                   </div>
                   <h4 className="text-xl font-bold mb-4">{feature.title}</h4>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">{feature.description}</p>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -180,20 +172,14 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-32 relative overflow-hidden bg-slate-950">
+        <section className="py-32 relative overflow-hidden bg-slate-900">
           <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
             <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-8 tracking-tight">
               Prêt à expédier au Togo ?
             </h2>
-            <p className="text-slate-400 text-lg md:text-xl mb-12 max-w-2xl mx-auto font-light">
-              Des milliers de particuliers et entreprises font déjà confiance à Afrigo Express.
-            </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <button className="w-full sm:w-auto bg-primary-600 text-white px-8 py-4 rounded-full font-semibold text-sm hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/20">
+              <button className="w-full sm:w-auto bg-primary-600 text-white px-8 py-4 rounded-full font-semibold text-sm hover:bg-primary-500 transition-all shadow-lg">
                 Créer un envoi
-              </button>
-              <button className="w-full sm:w-auto bg-white/10 text-white border border-white/10 px-8 py-4 rounded-full font-semibold text-sm hover:bg-white/20 transition-colors backdrop-blur-md">
-                En savoir plus
               </button>
             </div>
           </div>
@@ -201,7 +187,7 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="bg-white dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800">
+      <footer className="bg-bg-main py-12 border-t border-border-ui">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
           <Link href="/" className="flex items-center gap-2 group">
             <div className="relative w-8 h-8 opacity-60 group-hover:opacity-100 transition-all">
@@ -212,8 +198,8 @@ export default function Home() {
                 className="object-contain rounded-md"
               />
             </div>
-            <span className="font-bold tracking-tight text-slate-900 dark:text-white">
-              AFRIGO<span className="text-slate-400 dark:text-slate-600">EXPRESS</span>
+            <span className="font-bold tracking-tight text-slate-800 dark:text-white">
+              AFRIGO<span className="text-accent-600 dark:text-accent-500">EXPRESS</span>
             </span>
           </Link>
           <p className="text-xs font-medium text-slate-500">

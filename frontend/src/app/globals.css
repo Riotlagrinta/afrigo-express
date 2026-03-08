@@ -14,34 +14,34 @@
   --color-accent-500: #f59e0b;
   --color-accent-600: #d97706;
 
-  /* Couleurs de fond sémantiques pour un contrôle précis */
   --color-bg-main: var(--bg-main);
   --color-bg-card: var(--bg-card);
   --color-border-ui: var(--border-ui);
 }
 
 :root {
-  --bg-main: #f8fafc; /* Slate 50 */
+  /* On quitte le blanc pur pour un "Pearl Grey" (Gris Perle) plus doux */
+  --bg-main: #f4f7f9; 
   --bg-card: #ffffff;
-  --border-ui: rgba(226, 232, 240, 0.8); /* Slate 200 */
+  --border-ui: rgba(203, 213, 225, 0.4); /* Slate 300 très léger */
 }
 
 .dark {
-  /* On évite le noir pur, on part sur un Charcoal/Navy très profond */
-  --bg-main: #0f172a; /* Slate 950 */
-  --bg-card: #1e293b; /* Slate 800 */
-  --border-ui: rgba(51, 65, 85, 0.5); /* Slate 700 */
+  --bg-main: #0f172a; /* Deep Slate Blue */
+  --bg-card: #1e293b; 
+  --border-ui: rgba(51, 65, 85, 0.4); 
 }
 
 @layer base {
   body {
-    @apply antialiased text-slate-800 dark:text-slate-200 bg-bg-main transition-colors duration-500;
+    @apply antialiased text-slate-700 dark:text-slate-200 bg-bg-main transition-colors duration-500;
     scroll-behavior: smooth;
   }
 }
 
 @utility glass-nav {
-  @apply bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-border-ui;
+  /* Effet givré pour adoucir la luminosité de la navbar */
+  @apply bg-bg-main/80 backdrop-blur-md border-b border-border-ui;
 }
 
 @utility premium-card {
