@@ -14,7 +14,8 @@
 
 @layer base {
   body {
-    @apply antialiased text-slate-800 bg-slate-50;
+    @apply antialiased text-slate-800 bg-slate-50 dark:text-slate-100 dark:bg-slate-950;
     scroll-behavior: smooth;
+    transition: background-color 0.3s ease, color 0.3s ease;
   }
 }
