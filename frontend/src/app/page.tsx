@@ -2,38 +2,39 @@
 
 import { motion } from "framer-motion";
 import { 
-  Package, 
   MapPin, 
   CreditCard, 
   Clock, 
-  ChevronRight, 
   Truck,
   ShieldCheck,
   Smartphone,
   ArrowRight
 } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
     <div className="min-h-screen font-sans text-slate-800 dark:text-slate-200 transition-colors duration-500 overflow-hidden">
-      {/* Background Ambience - Softer approach */}
+      {/* Background Ambience */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-blue-50/50 to-white dark:from-slate-900/50 dark:to-slate-950"></div>
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary-500/10 dark:bg-primary-500/5 blur-[120px] rounded-full pointer-events-none -z-10"></div>
-      <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-accent-500/10 dark:bg-accent-500/5 blur-[150px] rounded-full pointer-events-none -z-10"></div>
-
+      
       {/* Navbar */}
       <header className="fixed top-0 w-full z-50 glass-nav transition-all h-20 flex items-center">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary-600 p-2.5 rounded-xl text-white shadow-lg shadow-primary-600/20">
-              <Package size={22} strokeWidth={2.5} />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-40 h-10 transition-transform duration-300 group-hover:scale-105">
+              {/* Votre logo personnalisé ici */}
+              <Image 
+                src="/brand/logo.jpeg" 
+                alt="Afrigo Express Logo" 
+                fill
+                className="object-contain dark:brightness-110"
+                priority
+              />
             </div>
-            <span className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">
-              AFRIGO<span className="text-accent-500">EXPRESS</span>
-            </span>
-          </div>
+          </Link>
           
           <nav className="hidden md:flex items-center gap-8 font-medium text-sm text-slate-600 dark:text-slate-400">
             <Link href="#services" className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">Services</Link>
@@ -44,9 +45,6 @@ export default function Home() {
           <div className="flex items-center gap-4">
             <ThemeToggle />
             <div className="hidden sm:block w-px h-6 bg-slate-200 dark:bg-slate-800"></div>
-            <button className="hidden sm:block text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors">
-              Connexion
-            </button>
             <button className="bg-slate-900 dark:bg-primary-600 text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-slate-800 dark:hover:bg-primary-500 transition-all shadow-lg shadow-primary-600/10 flex items-center gap-2">
               Expédier
               <ArrowRight size={16} />
@@ -59,7 +57,6 @@ export default function Home() {
         {/* Hero Section */}
         <section className="relative pt-36 pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
           <div className="grid lg:grid-cols-2 gap-16 lg:gap-12 items-center">
-            
             {/* Hero Content */}
             <motion.div 
               initial={{ opacity: 0, x: -20 }}
@@ -123,28 +120,11 @@ export default function Home() {
                <div className="premium-card aspect-square w-full p-2 relative overflow-hidden bg-white/50 dark:bg-slate-800/30">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary-500/5 to-transparent"></div>
                   
-                  {/* Visual Map Indicator */}
                   <div className="w-full h-full border border-slate-100 dark:border-slate-700/50 rounded-[1.8rem] relative flex items-center justify-center overflow-hidden bg-white dark:bg-slate-900">
                      <div className="absolute w-[80%] h-[80%] border border-slate-100 dark:border-slate-800 rounded-full animate-pulse"></div>
-                     <div className="absolute w-[60%] h-[60%] border border-slate-100 dark:border-slate-800 rounded-full"></div>
                      <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white shadow-2xl shadow-primary-500">
                         <MapPin size={24} />
                      </div>
-
-                     {/* Floating Cards */}
-                     <motion.div 
-                        animate={{ y: [0, -10, 0] }}
-                        transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                        className="absolute top-1/4 left-8 premium-card p-4 flex items-center gap-4 z-10"
-                     >
-                        <div className="bg-emerald-100 dark:bg-emerald-900/30 p-2 rounded-lg text-emerald-600 dark:text-emerald-400">
-                          <Truck size={20} />
-                        </div>
-                        <div>
-                           <p className="text-[10px] uppercase font-bold text-slate-400 mb-1">Status</p>
-                           <p className="text-sm font-bold">En transit</p>
-                        </div>
-                     </motion.div>
                   </div>
                </div>
             </motion.div>
@@ -156,7 +136,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto mb-16">
               <h2 className="text-primary-600 font-bold uppercase text-xs tracking-widest mb-4">Fonctionnalités</h2>
-              <h3 className="text-3xl md:text-4xl font-extrabold mb-6">Optimisé pour la rapidité.</h3>
+              <h3 className="text-3xl md:text-4xl font-extrabold mb-6 text-slate-900 dark:text-white">Optimisé pour la rapidité.</h3>
               <p className="text-slate-600 dark:text-slate-400 text-lg">Nous utilisons la technologie pour simplifier vos envois au Togo.</p>
             </div>
 
@@ -220,12 +200,14 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-white dark:bg-slate-950 py-12 border-t border-slate-200 dark:border-slate-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-             <Package size={20} className="text-slate-400" />
-             <span className="font-bold tracking-tight text-slate-900 dark:text-white">
-              AFRIGO<span className="text-accent-500">EXPRESS</span>
-            </span>
-          </div>
+          <Link href="/" className="relative w-32 h-8">
+            <Image 
+              src="/brand/logo.jpeg" 
+              alt="Afrigo Express Logo" 
+              fill
+              className="object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all dark:brightness-200"
+            />
+          </Link>
           <p className="text-xs font-medium text-slate-500">
             © {new Date().getFullYear()} Afrigo Express. Propulsé par Kelvix.
           </p>
