@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from "framer-motion";
 import {
   Package, MapPin, CreditCard, Clock, Truck,
   ShieldCheck, Smartphone, ArrowRight, CheckCircle2,
@@ -299,9 +299,9 @@ export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
-  const heroY = useTransform(scrollYProgress, [0, 1], ["0%", "25%"]);
-  const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const { scrollY } = useScroll();
+  const heroY = useTransform(scrollY, [0, 600], ["0%", "25%"]);
+  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
@@ -321,9 +321,9 @@ export default function Home() {
               transition={{ type: "spring", stiffness: 400 }}
               className="relative w-10 h-10"
             >
-              <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill className="object-contain rounded-xl" priority />
+              <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill sizes="40px" className="object-contain rounded-xl" priority />
             </motion.div>
-            <span style={{ fontFamily: "'Playfair Display', serif" }} className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
+            <span style={{ fontFamily: "var(--font-playfair), serif" }} className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
               AFRIGO<span className="text-gold-500">EXPRESS</span>
             </span>
           </Link>
@@ -431,7 +431,7 @@ export default function Home() {
               <motion.h1
                 {...fadeUp(0.2)}
                 className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--font-playfair), serif" }}
               >
                 La livraison{" "}
                 <br className="hidden lg:block" />
@@ -523,7 +523,7 @@ export default function Home() {
               >
                 <div
                   className="text-4xl md:text-5xl font-extrabold mb-2 gold-text"
-                  style={{ fontFamily: "'Playfair Display', serif" }}
+                  style={{ fontFamily: "var(--font-playfair), serif" }}
                 >
                   <AnimatedCounter value={s.value} />
                 </div>
@@ -543,7 +543,7 @@ export default function Home() {
             </p>
             <h2
               className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Tout ce dont vous avez besoin
             </h2>
@@ -562,7 +562,7 @@ export default function Home() {
                 >
                   {s.icon}
                 </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
                   {s.title}
                 </h3>
                 <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
@@ -602,7 +602,7 @@ export default function Home() {
             </p>
             <h2
               className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Simple, rapide, fiable
             </h2>
@@ -633,7 +633,7 @@ export default function Home() {
                 >
                   {step.n}
                 </div>
-                <h4 className="text-lg font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "'Playfair Display', serif" }}>
+                <h4 className="text-lg font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
                   {step.title}
                 </h4>
                 <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
@@ -659,7 +659,7 @@ export default function Home() {
                 <div className="flex items-center justify-between mb-6">
                   <div>
                     <p className="text-xs text-slate-400 mb-1">Livraisons ce mois</p>
-                    <p className="text-3xl font-bold gold-text" style={{ fontFamily: "'Playfair Display', serif" }}>1 284</p>
+                    <p className="text-3xl font-bold gold-text" style={{ fontFamily: "var(--font-playfair), serif" }}>1 284</p>
                   </div>
                   <div className="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center">
                     <BarChart3 size={22} className="text-gold-500" />
@@ -692,7 +692,7 @@ export default function Home() {
                     { label: "Incidents", value: "0", color: "text-red-400" },
                   ].map((m) => (
                     <div key={m.label} className="luxury-card p-4 text-center">
-                      <p className={`text-xl font-bold ${m.color}`} style={{ fontFamily: "'Playfair Display', serif" }}>{m.value}</p>
+                      <p className={`text-xl font-bold ${m.color}`} style={{ fontFamily: "var(--font-playfair), serif" }}>{m.value}</p>
                       <p className="text-xs text-slate-400 mt-1">{m.label}</p>
                     </div>
                   ))}
@@ -717,7 +717,7 @@ export default function Home() {
               </p>
               <h2
                 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-8 leading-tight"
-                style={{ fontFamily: "'Playfair Display', serif" }}
+                style={{ fontFamily: "var(--font-playfair), serif" }}
               >
                 La logistique pensée pour les professionnels.
               </h2>
@@ -770,7 +770,7 @@ export default function Home() {
             </p>
             <h2
               className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "'Playfair Display', serif" }}
+              style={{ fontFamily: "var(--font-playfair), serif" }}
             >
               Ils nous font confiance
             </h2>
@@ -835,7 +835,7 @@ export default function Home() {
           <motion.h2
             {...fadeUp(0.1)}
             className="text-4xl md:text-6xl font-extrabold text-white mb-8 leading-tight"
-            style={{ fontFamily: "'Playfair Display', serif" }}
+            style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Prêt à expédier au Togo ?
           </motion.h2>
@@ -875,9 +875,9 @@ export default function Home() {
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center gap-3 mb-6">
                 <div className="relative w-9 h-9">
-                  <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill className="object-contain rounded-xl" />
+                  <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill sizes="36px" className="object-contain rounded-xl" />
                 </div>
-                <span style={{ fontFamily: "'Playfair Display', serif" }} className="font-bold text-white">
+                <span style={{ fontFamily: "var(--font-playfair), serif" }} className="font-bold text-white">
                   AFRIGO<span className="text-gold-500">EXPRESS</span>
                 </span>
               </Link>
