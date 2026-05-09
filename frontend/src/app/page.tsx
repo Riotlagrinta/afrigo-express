@@ -1,343 +1,346 @@
 "use client";
 
-import { motion, useScroll, useTransform, AnimatePresence, MotionValue } from "framer-motion";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import {
-  Package, MapPin, CreditCard, Clock, Truck,
-  ShieldCheck, Smartphone, ArrowRight, CheckCircle2,
-  Star, ChevronDown, Menu, X, Phone, Mail,
-  BarChart3, Zap, Globe2, HeadphonesIcon
+  MapPin, Star, ChevronDown, Menu, X, ArrowRight,
+  Phone, Mail, Wifi, Car, UtensilsCrossed, Waves,
+  Users, Calendar, ChevronLeft, ChevronRight,
+  Instagram, Facebook, Twitter, Youtube
 } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
+import { useState, useEffect, useRef } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
-import { useRef, useState, useEffect } from "react";
 
-/* ─────────────────────── helpers ─────────────────────── */
+/* ─── Animation helpers ─── */
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 40 },
+  initial: { opacity: 0, y: 50 },
   whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, margin: "-60px" },
-  transition: { duration: 0.7, ease: "easeOut" as const, delay },
+  viewport: { once: true, margin: "-80px" },
+  transition: { duration: 0.8, ease: "easeOut" as const, delay },
 });
 
 const fadeIn = (delay = 0) => ({
   initial: { opacity: 0 },
   whileInView: { opacity: 1 },
   viewport: { once: true },
-  transition: { duration: 0.6, delay },
+  transition: { duration: 0.7, delay },
 });
 
-/* ─────────────────────── data ─────────────────────── */
-const services = [
+/* ─── Data ─── */
+const rooms = [
   {
-    icon: <MapPin size={26} />,
-    title: "Tracking GPS",
-    description: "Suivez votre colis sur une carte interactive en temps réel avec notifications push.",
-    color: "from-blue-500/20 to-blue-600/5",
-    accent: "text-blue-400",
-    border: "border-blue-500/20",
+    name: "Chambre Supérieure",
+    size: "35 m²",
+    guests: "2 personnes",
+    price: "180",
+    desc: "Vue jardin, literie premium, douche à l'italienne, minibar.",
+    img: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80",
+    tags: ["Wifi", "Climatisation", "Room Service"],
   },
   {
-    icon: <CreditCard size={26} />,
-    title: "Paiement Mobile",
-    description: "T-Money, Flooz, carte bancaire — payez en 10 secondes sans friction.",
-    color: "from-emerald-500/20 to-emerald-600/5",
-    accent: "text-emerald-400",
-    border: "border-emerald-500/20",
+    name: "Junior Suite",
+    size: "55 m²",
+    guests: "2 personnes",
+    price: "280",
+    desc: "Salon séparé, baignoire balnéo, vue panoramique sur la piscine.",
+    img: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80",
+    tags: ["Balnéo", "Vue piscine", "Lounge"],
   },
   {
-    icon: <Zap size={26} />,
-    title: "Livraison Express",
-    description: "Collecte en 30 min à Lomé. Livraison le jour même dans les zones couvertes.",
-    color: "from-gold-500/20 to-gold-600/5",
-    accent: "text-gold-400",
-    border: "border-gold-500/20",
-  },
-  {
-    icon: <ShieldCheck size={26} />,
-    title: "Assurance Colis",
-    description: "Chaque envoi est assuré jusqu'à 500 000 FCFA. Votre sérénité d'abord.",
-    color: "from-purple-500/20 to-purple-600/5",
-    accent: "text-purple-400",
-    border: "border-purple-500/20",
-  },
-  {
-    icon: <Globe2 size={26} />,
-    title: "Couverture Nationale",
-    description: "Lomé, Kpalimé, Sokodé, Kara, Dapaong — tout le Togo est connecté.",
-    color: "from-rose-500/20 to-rose-600/5",
-    accent: "text-rose-400",
-    border: "border-rose-500/20",
-  },
-  {
-    icon: <HeadphonesIcon size={26} />,
-    title: "Support 24/7",
-    description: "Une équipe disponible à toute heure pour vous accompagner.",
-    color: "from-cyan-500/20 to-cyan-600/5",
-    accent: "text-cyan-400",
-    border: "border-cyan-500/20",
+    name: "Suite Présidentielle",
+    size: "120 m²",
+    guests: "4 personnes",
+    price: "650",
+    desc: "Terrasse privée, butler dédié, jacuzzi extérieur, salle à manger.",
+    img: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80",
+    tags: ["Terrasse", "Butler", "Jacuzzi"],
   },
 ];
 
-const stats = [
-  { value: "50K+", label: "Colis livrés" },
-  { value: "98%", label: "Satisfaction client" },
-  { value: "< 2h", label: "Délai moyen à Lomé" },
-  { value: "40+", label: "Villes couvertes" },
+const experiences = [
+  {
+    icon: <UtensilsCrossed size={28} />,
+    title: "Gastronomie",
+    subtitle: "Restaurant Le Jardin",
+    desc: "Cuisine fusion afro-contemporaine préparée par notre Chef étoilé. Produits locaux, saveurs d'exception.",
+    img: "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80",
+    color: "from-amber-900/80",
+  },
+  {
+    icon: <Waves size={28} />,
+    title: "Wellness & Spa",
+    subtitle: "Espace L'Essentiel",
+    desc: "3 000 m² dédiés au bien-être : hammam, piscine intérieure, massages signature et soins visage.",
+    img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=800&q=80",
+    color: "from-teal-900/80",
+  },
+  {
+    icon: <Users size={28} />,
+    title: "Événements",
+    subtitle: "Salles de réception",
+    desc: "5 salles modulables jusqu'à 600 personnes. Mariage, conférence, séminaire : chaque détail est orchestré.",
+    img: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80",
+    color: "from-indigo-900/80",
+  },
 ];
 
-const steps = [
-  { n: "01", title: "Créez votre envoi", desc: "Remplissez le formulaire en ligne ou via notre app en moins de 2 minutes." },
-  { n: "02", title: "Collecte à domicile", desc: "Notre coursier arrive chez vous dans les 30 minutes suivant votre commande." },
-  { n: "03", title: "Suivi en direct", desc: "Recevez des notifications SMS et email à chaque étape du trajet." },
-  { n: "04", title: "Livraison confirmée", desc: "Signature électronique et photo de preuve envoyées immédiatement." },
+const amenities = [
+  { icon: <Wifi size={20} />, label: "WiFi Premium" },
+  { icon: <Car size={20} />, label: "Voiturier" },
+  { icon: <Waves size={20} />, label: "Piscine Infinity" },
+  { icon: <UtensilsCrossed size={20} />, label: "3 Restaurants" },
+  { icon: <Users size={20} />, label: "Centre affaires" },
+  { icon: <Calendar size={20} />, label: "Concierge 24h" },
 ];
 
 const testimonials = [
   {
-    name: "Kossi Adjonou",
-    role: "Gérant, Boutique Adjona",
-    text: "Afrigo Express a transformé ma logistique. Mes clients reçoivent leurs commandes le jour même. Je recommande vivement.",
+    name: "Sophie Renard",
+    country: "Paris, France",
     rating: 5,
+    text: "Une expérience absolument inoubliable. Le service est d'une attention rare, les chambres somptueuses. Nous reviendrons sans hésiter.",
   },
   {
-    name: "Abla Mensah",
-    role: "Directrice RH, BTCI",
-    text: "Fiabilité irréprochable pour nos courriers internes. Le tableau de bord entreprise est excellent.",
+    name: "James Whitfield",
+    country: "London, UK",
     rating: 5,
+    text: "The presidential suite exceeded every expectation. The butler service is flawless and the spa is world-class. Truly 5-star.",
   },
   {
-    name: "Yao Koudou",
-    role: "E-commerçant",
-    text: "En 6 mois, zéro colis perdu. Le tracking en temps réel rassure mes acheteurs. C'est vraiment professionnel.",
+    name: "Amara Diallo",
+    country: "Dakar, Sénégal",
     rating: 5,
+    text: "Le meilleur hôtel que j'aie jamais visité sur le continent. La cuisine du Chef est une révélation. Service impeccable.",
   },
+];
+
+const galleryImages = [
+  { src: "https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&q=80", span: "col-span-2 row-span-2" },
+  { src: "https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&q=80", span: "" },
+  { src: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=600&q=80", span: "" },
+  { src: "https://images.unsplash.com/photo-1445019980597-93fa8acb246c?w=600&q=80", span: "" },
+  { src: "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600&q=80", span: "" },
+  { src: "https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&q=80", span: "" },
 ];
 
 const navLinks = [
-  { label: "Services", href: "#services" },
-  { label: "Suivi Colis", href: "#suivi" },
-  { label: "Entreprises", href: "#entreprise" },
-  { label: "Contact", href: "#contact" },
+  { label: "Chambres & Suites", href: "#chambres" },
+  { label: "Expériences", href: "#experiences" },
+  { label: "Spa & Wellness", href: "#experiences" },
+  { label: "Événements", href: "#experiences" },
+  { label: "Galerie", href: "#galerie" },
 ];
 
-/* ─────────────────────── 3D floating package ─────────────────────── */
-function FloatingPackage() {
+/* ─── Booking widget ─── */
+function BookingWidget() {
+  const [checkin, setCheckin] = useState("");
+  const [checkout, setCheckout] = useState("");
+  const [guests, setGuests] = useState(2);
+
   return (
-    <div className="relative w-full h-full flex items-center justify-center select-none">
-      {/* Orbiting rings */}
+    <motion.div
+      initial={{ opacity: 0, y: 40 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
+      className="w-full max-w-4xl mx-auto"
+    >
       <div
-        className="absolute rounded-full border border-gold-500/10"
-        style={{ width: 420, height: 420 }}
-      />
-      <div
-        className="absolute rounded-full border border-gold-500/10"
-        style={{ width: 300, height: 300 }}
-      />
-
-      {/* Orbiting dot 1 */}
-      <motion.div
-        className="absolute w-3 h-3 rounded-full bg-gold-400/60"
-        style={{ left: "50%", top: "50%", marginLeft: -6, marginTop: -156, transformOrigin: "6px 156px" }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Orbiting dot 2 */}
-      <motion.div
-        className="absolute w-2 h-2 rounded-full bg-blue-400/60"
-        style={{ left: "50%", top: "50%", marginLeft: -4, marginTop: -96, transformOrigin: "4px 96px" }}
-        animate={{ rotate: -360 }}
-        transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-      />
-
-      {/* Main 3D cube */}
-      <motion.div
-        animate={{ y: [0, -16, 0], rotateY: [0, 8, -8, 0] }}
-        transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        className="relative z-10"
+        className="rounded-2xl p-2 flex flex-col md:flex-row items-stretch md:items-center gap-2"
+        style={{ background: "rgba(255,255,255,0.07)", backdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.12)" }}
       >
-        <div className="cube-scene">
-          <div
-            className="relative"
-            style={{
-              width: 140,
-              height: 140,
-              transformStyle: "preserve-3d",
-              transform: "rotateX(-20deg) rotateY(30deg)",
-            }}
-          >
-            {/* Box body */}
-            <div
-              className="absolute inset-0 rounded-2xl border border-gold-500/40"
-              style={{
-                background: "linear-gradient(135deg, rgba(212,160,23,0.15) 0%, rgba(13,27,46,0.6) 100%)",
-                backdropFilter: "blur(8px)",
-              }}
-            />
-            {/* Tape stripe */}
-            <div
-              className="absolute top-1/2 left-0 right-0 h-px -translate-y-1/2"
-              style={{ background: "linear-gradient(90deg, transparent, rgba(212,160,23,0.6), transparent)" }}
-            />
-            <div
-              className="absolute top-0 bottom-0 left-1/2 w-px -translate-x-1/2"
-              style={{ background: "linear-gradient(180deg, transparent, rgba(212,160,23,0.6), transparent)" }}
-            />
-            {/* Logo mark */}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div
-                className="w-10 h-10 rounded-full flex items-center justify-center"
-                style={{ background: "rgba(212,160,23,0.2)", border: "1px solid rgba(212,160,23,0.4)" }}
-              >
-                <Package size={20} className="text-gold-400" />
-              </div>
-            </div>
-            {/* Shadow bottom */}
-            <div
-              className="absolute bottom-0 left-4 right-4 h-1 rounded-full"
-              style={{ background: "rgba(212,160,23,0.2)", filter: "blur(4px)", transform: "translateY(8px)" }}
-            />
+        {/* Check-in */}
+        <div className="flex-1 px-5 py-3 flex flex-col border-b md:border-b-0 md:border-r border-white/10">
+          <span className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1">Arrivée</span>
+          <input
+            type="date"
+            value={checkin}
+            onChange={(e) => setCheckin(e.target.value)}
+            className="bg-transparent text-white font-medium text-sm outline-none [color-scheme:dark]"
+          />
+        </div>
+        {/* Check-out */}
+        <div className="flex-1 px-5 py-3 flex flex-col border-b md:border-b-0 md:border-r border-white/10">
+          <span className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1">Départ</span>
+          <input
+            type="date"
+            value={checkout}
+            onChange={(e) => setCheckout(e.target.value)}
+            className="bg-transparent text-white font-medium text-sm outline-none [color-scheme:dark]"
+          />
+        </div>
+        {/* Guests */}
+        <div className="flex-1 px-5 py-3 flex flex-col border-b md:border-b-0 md:border-r border-white/10">
+          <span className="text-white/50 text-xs font-semibold uppercase tracking-widest mb-1">Voyageurs</span>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setGuests(Math.max(1, guests - 1))} className="w-6 h-6 rounded-full border border-white/20 text-white flex items-center justify-center text-sm hover:border-gold-400 transition-colors">−</button>
+            <span className="text-white font-medium text-sm w-4 text-center">{guests}</span>
+            <button onClick={() => setGuests(Math.min(8, guests + 1))} className="w-6 h-6 rounded-full border border-white/20 text-white flex items-center justify-center text-sm hover:border-gold-400 transition-colors">+</button>
           </div>
         </div>
-      </motion.div>
-
-      {/* Floating status cards */}
-      <motion.div
-        initial={{ opacity: 0, x: -30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-        className="absolute left-0 top-1/4 luxury-card px-4 py-3 flex items-center gap-3 text-sm"
-        style={{ minWidth: 180 }}
-      >
-        <div className="status-dot" />
-        <div>
-          <p className="font-semibold text-slate-800 dark:text-white text-xs">En transit</p>
-          <p className="text-slate-400 text-xs">AF-8392 · Lomé</p>
+        {/* CTA */}
+        <div className="px-2 py-1">
+          <motion.button
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className="btn-gold px-8 py-4 text-sm font-bold w-full md:w-auto whitespace-nowrap flex items-center gap-2 justify-center"
+          >
+            Vérifier les disponibilités
+            <ArrowRight size={15} />
+          </motion.button>
         </div>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, x: 30 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: 1.5, duration: 0.6 }}
-        className="absolute right-0 bottom-1/4 luxury-card px-4 py-3 flex items-center gap-3 text-sm"
-        style={{ minWidth: 180 }}
-      >
-        <CheckCircle2 size={18} className="text-emerald-500 shrink-0" />
-        <div>
-          <p className="font-semibold text-slate-800 dark:text-white text-xs">Livré !</p>
-          <p className="text-slate-400 text-xs">il y a 3 minutes</p>
-        </div>
-      </motion.div>
-
-      {/* Particles */}
-      {[
-        { size: 6, top: "15%", left: "10%", dur: "7s", delay: "0s" },
-        { size: 4, top: "70%", left: "15%", dur: "5s", delay: "1s" },
-        { size: 5, top: "25%", right: "8%", dur: "8s", delay: "0.5s" },
-        { size: 3, top: "80%", right: "20%", dur: "6s", delay: "2s" },
-      ].map((p, i) => (
-        <span
-          key={i}
-          className="particle"
-          style={{
-            width: p.size,
-            height: p.size,
-            top: p.top,
-            left: (p as {left?: string}).left,
-            right: (p as {right?: string}).right,
-            "--dur": p.dur,
-            "--delay": p.delay,
-          } as React.CSSProperties}
-        />
-      ))}
-    </div>
+      </div>
+    </motion.div>
   );
 }
 
-/* ─────────────────────── Animated counter ─────────────────────── */
-function AnimatedCounter({ value }: { value: string }) {
+/* ─── Animated stat counter ─── */
+function Counter({ target, suffix = "" }: { target: number; suffix?: string }) {
+  const [val, setVal] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const [displayed, setDisplayed] = useState("0");
 
   useEffect(() => {
-    const target = ref.current;
-    if (!target) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const numeric = parseInt(value.replace(/\D/g, ""));
-          if (isNaN(numeric)) { setDisplayed(value); return; }
-          let start = 0;
-          const duration = 1800;
-          const startTime = performance.now();
-          const suffix = value.replace(/[\d.]/g, "");
-          const tick = (now: number) => {
-            const elapsed = now - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-            const eased = 1 - Math.pow(1 - progress, 3);
-            const current = Math.round(eased * numeric);
-            setDisplayed(`${current}${suffix}`);
-            if (progress < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.5 }
-    );
-    observer.observe(target);
-    return () => observer.disconnect();
-  }, [value]);
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      const start = performance.now();
+      const duration = 1600;
+      const tick = (now: number) => {
+        const p = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - p, 3);
+        setVal(Math.round(eased * target));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+      obs.disconnect();
+    }, { threshold: 0.5 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [target]);
 
-  return <span ref={ref}>{displayed}</span>;
+  return <span ref={ref}>{val}{suffix}</span>;
 }
 
-/* ─────────────────────── Main component ─────────────────────── */
+/* ─── Room card with 3D tilt ─── */
+function RoomCard({ room, index }: { room: typeof rooms[0]; index: number }) {
+  const [tilt, setTilt] = useState({ x: 0, y: 0 });
+
+  const handleMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientY - rect.top) / rect.height - 0.5) * 10;
+    const y = ((e.clientX - rect.left) / rect.width - 0.5) * -10;
+    setTilt({ x, y });
+  };
+
+  return (
+    <motion.div
+      {...fadeUp(index * 0.12)}
+      className="group cursor-pointer"
+      onMouseMove={handleMove}
+      onMouseLeave={() => setTilt({ x: 0, y: 0 })}
+      style={{ perspective: 1000 }}
+    >
+      <motion.div
+        animate={{ rotateX: tilt.x, rotateY: tilt.y }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="luxury-card overflow-hidden"
+        style={{ transformStyle: "preserve-3d" }}
+      >
+        {/* Image */}
+        <div className="relative h-64 overflow-hidden">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={room.img}
+            alt={room.name}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+          <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-sm border border-white/10 rounded-full px-3 py-1">
+            <span className="text-white text-xs font-semibold">{room.size}</span>
+          </div>
+          <div className="absolute bottom-4 left-4">
+            <p className="text-white/70 text-xs mb-1">À partir de</p>
+            <p className="text-white font-bold text-2xl" style={{ fontFamily: "var(--font-playfair), serif" }}>
+              {room.price}€<span className="text-sm font-normal text-white/60"> /nuit</span>
+            </p>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-7">
+          <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2" style={{ fontFamily: "var(--font-playfair), serif" }}>
+            {room.name}
+          </h3>
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-5 leading-relaxed">{room.desc}</p>
+          <div className="flex flex-wrap gap-2 mb-6">
+            {room.tags.map((t) => (
+              <span key={t} className="text-xs px-3 py-1 rounded-full border border-gold-500/30 text-gold-600 dark:text-gold-400 font-medium">
+                {t}
+              </span>
+            ))}
+          </div>
+          <motion.button
+            whileHover={{ gap: "12px" }}
+            className="flex items-center gap-2 text-sm font-semibold text-gold-600 dark:text-gold-400 group/btn"
+          >
+            Réserver cette chambre
+            <ArrowRight size={15} className="transition-transform group-hover/btn:translate-x-1" />
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+/* ─── Main page ─── */
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
+  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const { scrollY } = useScroll();
-  const heroY = useTransform(scrollY, [0, 600], ["0%", "25%"]);
-  const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  const heroImgY = useTransform(scrollY, [0, 700], ["0%", "20%"]);
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handler);
-    return () => window.removeEventListener("scroll", handler);
+    const h = () => setScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", h);
+    return () => window.removeEventListener("scroll", h);
+  }, []);
+
+  /* Auto-rotate testimonials */
+  useEffect(() => {
+    const t = setInterval(() => setActiveTestimonial((p) => (p + 1) % testimonials.length), 5000);
+    return () => clearInterval(t);
   }, []);
 
   return (
-    <div className="min-h-screen mesh-bg text-slate-800 dark:text-slate-200 overflow-x-hidden">
+    <div className="min-h-screen bg-bg-main text-slate-800 dark:text-slate-200 overflow-x-hidden">
 
-      {/* ══ NAVBAR ══ */}
-      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "glass-nav shadow-lg shadow-black/5 h-16" : "bg-transparent h-20"}`}>
+      {/* ══════════════ NAVBAR ══════════════ */}
+      <header className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? "glass-nav shadow-sm h-16" : "bg-transparent h-20"}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
-            <motion.div
-              whileHover={{ rotate: -5, scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400 }}
-              className="relative w-10 h-10"
+          {/* Logo */}
+          <Link href="/" className="flex flex-col leading-none">
+            <span
+              className={`font-bold text-xl tracking-[0.15em] transition-colors ${scrolled ? "text-slate-900 dark:text-white" : "text-white"}`}
+              style={{ fontFamily: "var(--font-playfair), serif" }}
             >
-              <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill sizes="40px" className="object-contain rounded-xl" priority />
-            </motion.div>
-            <span style={{ fontFamily: "var(--font-playfair), serif" }} className="font-bold text-lg tracking-tight text-slate-900 dark:text-white">
-              AFRIGO<span className="text-gold-500">EXPRESS</span>
+              BRAVIA
+            </span>
+            <span className={`text-[9px] tracking-[0.4em] font-medium transition-colors ${scrolled ? "text-gold-500" : "text-gold-300"}`}>
+              HÔTELS & RESORTS
             </span>
           </Link>
 
           {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-500 dark:text-slate-400">
+          <nav className="hidden lg:flex items-center gap-7 text-xs font-semibold tracking-widest uppercase">
             {navLinks.map((l) => (
               <Link
                 key={l.label}
                 href={l.href}
-                className="relative group hover:text-slate-900 dark:hover:text-white transition-colors"
+                className={`relative group transition-colors ${scrolled ? "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white" : "text-white/70 hover:text-white"}`}
               >
                 {l.label}
-                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold-500 group-hover:w-full transition-all duration-300" />
+                <span className="absolute -bottom-0.5 left-0 w-0 h-px bg-gold-400 group-hover:w-full transition-all duration-300" />
               </Link>
             ))}
           </nav>
@@ -347,16 +350,17 @@ export default function Home() {
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="hidden sm:flex btn-gold items-center gap-2 px-5 py-2.5 text-sm"
+              className="hidden sm:block btn-gold px-5 py-2.5 text-xs tracking-widest uppercase font-bold"
             >
-              Expédier maintenant
-              <ArrowRight size={15} />
+              Réserver
             </motion.button>
             <button
-              className="md:hidden p-2 rounded-xl border border-border-ui"
+              className={`lg:hidden p-2 rounded-xl border ${scrolled ? "border-border-ui" : "border-white/20"}`}
               onClick={() => setMenuOpen(!menuOpen)}
             >
-              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+              {menuOpen
+                ? <X size={20} className={scrolled ? "" : "text-white"} />
+                : <Menu size={20} className={scrolled ? "" : "text-white"} />}
             </button>
           </div>
         </div>
@@ -368,566 +372,448 @@ export default function Home() {
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
-              className="md:hidden glass-nav border-t border-border-ui"
+              className="lg:hidden glass-nav border-t border-border-ui"
             >
-              <div className="px-6 py-4 flex flex-col gap-4">
+              <div className="px-6 py-5 flex flex-col gap-4">
                 {navLinks.map((l) => (
-                  <Link
-                    key={l.label}
-                    href={l.href}
-                    className="text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-gold-500 transition-colors py-1"
+                  <Link key={l.label} href={l.href}
+                    className="text-sm font-semibold tracking-widest uppercase text-slate-600 dark:text-slate-300 hover:text-gold-500 transition-colors"
                     onClick={() => setMenuOpen(false)}
                   >
                     {l.label}
                   </Link>
                 ))}
-                <button className="btn-gold px-5 py-2.5 text-sm w-full mt-2">
-                  Expédier maintenant
-                </button>
+                <button className="btn-gold px-5 py-3 text-xs tracking-widest uppercase font-bold mt-2 w-full">Réserver</button>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
       </header>
 
-      {/* ══ HERO ══ */}
-      <section
-        ref={heroRef}
-        className="relative min-h-screen flex items-center pt-20 overflow-hidden"
-      >
-        {/* Background gradient blobs */}
-        <motion.div
-          className="absolute -top-40 -left-40 w-[600px] h-[600px] rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(212,160,23,0.08) 0%, transparent 70%)",
-          }}
-          animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 8, repeat: Infinity }}
-        />
-        <motion.div
-          className="absolute -bottom-20 -right-20 w-[500px] h-[500px] rounded-full pointer-events-none"
-          style={{
-            background: "radial-gradient(circle, rgba(59,130,246,0.06) 0%, transparent 70%)",
-          }}
-          animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.9, 0.5] }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-        />
+      {/* ══════════════ HERO ══════════════ */}
+      <section className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden">
+        {/* Parallax background */}
+        <motion.div className="absolute inset-0 scale-110" style={{ y: heroImgY }}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1600&q=85"
+            alt="Bravia Hotels"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.2) 40%, rgba(0,0,0,0.65) 100%)" }} />
+        </motion.div>
 
-        <motion.div
-          style={{ y: heroY, opacity: heroOpacity }}
-          className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20"
-        >
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left */}
-            <div className="text-center lg:text-left">
-              <motion.div
-                {...fadeIn(0.1)}
-                className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full border border-border-ui bg-bg-card/60 backdrop-blur-sm text-xs font-medium text-slate-500 dark:text-slate-400 mb-8"
-              >
-                <span className="status-dot" />
-                Opérationnel à Lomé et dans 40+ villes
-              </motion.div>
-
-              <motion.h1
-                {...fadeUp(0.2)}
-                className="text-5xl md:text-6xl lg:text-7xl font-extrabold leading-[1.05] tracking-tight mb-8"
-                style={{ fontFamily: "var(--font-playfair), serif" }}
-              >
-                La livraison{" "}
-                <br className="hidden lg:block" />
-                <em className="not-italic gold-text">premium</em>
-                <br className="hidden lg:block" />
-                au Togo.
-              </motion.h1>
-
-              <motion.p
-                {...fadeUp(0.35)}
-                className="text-lg text-slate-500 dark:text-slate-400 mb-10 max-w-lg mx-auto lg:mx-0 leading-relaxed"
-              >
-                Expédiez, suivez et recevez vos colis avec la précision d&apos;une
-                horloge suisse — partout au Togo, 7j/7.
-              </motion.p>
-
-              {/* Tracking bar */}
-              <motion.div
-                {...fadeUp(0.45)}
-                id="suivi"
-                className="luxury-card p-2 flex items-center max-w-md w-full mx-auto lg:mx-0 focus-within:ring-2 focus-within:ring-gold-500/30 transition-all"
-              >
-                <div className="pl-4 text-gold-500">
-                  <MapPin size={20} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Numéro de suivi (ex: AF-8392)"
-                  className="flex-1 bg-transparent px-4 py-3 outline-none text-slate-800 dark:text-slate-200 placeholder:text-slate-400 font-medium text-sm"
-                />
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="btn-gold px-5 py-2.5 text-sm shrink-0"
-                >
-                  Suivre
-                </motion.button>
-              </motion.div>
-
-              <motion.div
-                {...fadeUp(0.55)}
-                className="mt-10 flex flex-wrap items-center justify-center lg:justify-start gap-6 text-sm font-medium text-slate-500 dark:text-slate-400"
-              >
-                {[
-                  { icon: <ShieldCheck size={16} className="text-emerald-500" />, label: "100% Sécurisé" },
-                  { icon: <Clock size={16} className="text-gold-500" />, label: "Express 30 min" },
-                  { icon: <Smartphone size={16} className="text-blue-400" />, label: "App disponible" },
-                ].map((b) => (
-                  <div key={b.label} className="flex items-center gap-2">
-                    {b.icon}
-                    {b.label}
-                  </div>
-                ))}
-              </motion.div>
-            </div>
-
-            {/* Right — 3D visual */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, x: 40 }}
-              animate={{ opacity: 1, scale: 1, x: 0 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.22, 1, 0.36, 1] }}
-              className="relative hidden lg:block h-[520px]"
-            >
-              <FloatingPackage />
-            </motion.div>
-          </div>
-
-          {/* Scroll indicator */}
+        {/* Hero content */}
+        <div className="relative z-10 text-center px-4 sm:px-6 max-w-5xl mx-auto w-full mb-16">
           <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            className="hidden lg:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 text-slate-400 text-xs"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold-400/40 text-gold-300 text-xs font-semibold tracking-[0.2em] uppercase mb-8"
+            style={{ background: "rgba(212,160,23,0.1)", backdropFilter: "blur(8px)" }}
           >
-            <span>Découvrir</span>
-            <ChevronDown size={16} />
+            <Star size={10} className="fill-gold-400 text-gold-400" />
+            5 étoiles · Lomé, Togo
+            <Star size={10} className="fill-gold-400 text-gold-400" />
           </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4, ease: "easeOut" }}
+            className="text-5xl sm:text-6xl md:text-8xl font-bold text-white leading-[1.05] mb-6 tracking-tight"
+            style={{ fontFamily: "var(--font-playfair), serif" }}
+          >
+            L&apos;art du<br />
+            <em className="not-italic" style={{ background: "linear-gradient(135deg,#f0d080,#d4a017,#e8c245)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
+              séjour parfait
+            </em>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.7 }}
+            className="text-white/70 text-lg mb-12 max-w-xl mx-auto leading-relaxed"
+          >
+            Découvrez un havre d&apos;élégance et de sérénité au cœur de Lomé.
+            Une expérience hôtelière d&apos;exception, à chaque visite.
+          </motion.p>
+
+          {/* Booking widget */}
+          <BookingWidget />
+        </div>
+
+        {/* Scroll indicator */}
+        <motion.div
+          animate={{ y: [0, 10, 0] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 text-white/50 text-xs tracking-widest uppercase"
+        >
+          <span>Découvrir</span>
+          <ChevronDown size={18} />
         </motion.div>
       </section>
 
-      {/* ══ STATS BAND ══ */}
-      <section className="py-16 border-y border-border-ui bg-navy-900/5 dark:bg-white/2">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((s, i) => (
-              <motion.div
-                key={s.label}
-                {...fadeUp(i * 0.1)}
-                className="text-center"
-              >
-                <div
-                  className="text-4xl md:text-5xl font-extrabold mb-2 gold-text"
-                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                >
-                  <AnimatedCounter value={s.value} />
-                </div>
-                <p className="text-sm font-medium text-slate-500 dark:text-slate-400">{s.label}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ SERVICES ══ */}
-      <section id="services" className="py-32 relative">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-20">
-            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">
-              Nos Services
-            </p>
-            <h2
-              className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              Tout ce dont vous avez besoin
-            </h2>
-            <div className="section-divider" />
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((s, i) => (
-              <motion.div
-                key={s.title}
-                {...fadeUp(i * 0.08)}
-                className={`luxury-card-hover p-8 group cursor-default border ${s.border}`}
-              >
-                <div
-                  className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${s.color} ${s.accent} flex items-center justify-center mb-7 transition-transform duration-500 group-hover:scale-110`}
-                >
-                  {s.icon}
-                </div>
-                <h3 className="text-xl font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
-                  {s.title}
-                </h3>
-                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                  {s.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ HOW IT WORKS ══ */}
-      <section className="py-32 relative bg-navy-900/3 dark:bg-white/1 border-y border-border-ui overflow-hidden">
-        {/* Animated SVG path */}
-        <svg
-          className="absolute top-1/2 left-0 right-0 w-full opacity-[0.04] pointer-events-none"
-          style={{ transform: "translateY(-50%)" }}
-          viewBox="0 0 1200 100"
-          fill="none"
-        >
-          <motion.path
-            d="M0 50 Q300 0 600 50 Q900 100 1200 50"
-            stroke="#d4a017"
-            strokeWidth="2"
-            strokeDasharray="1000"
-            initial={{ strokeDashoffset: 1000 }}
-            whileInView={{ strokeDashoffset: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 2, ease: "easeInOut" }}
-          />
-        </svg>
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-20">
-            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">
-              Comment ça marche
-            </p>
-            <h2
-              className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              Simple, rapide, fiable
-            </h2>
-            <div className="section-divider" />
-          </motion.div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {steps.map((step, i) => (
-              <motion.div
-                key={step.n}
-                {...fadeUp(i * 0.12)}
-                className="relative text-center group"
-              >
-                {/* Connector line */}
-                {i < steps.length - 1 && (
-                  <div className="hidden lg:block absolute top-10 left-[calc(50%+48px)] right-[-calc(50%-48px)] h-px border-t border-dashed border-gold-500/20" />
-                )}
-                {/* Number circle */}
-                <div
-                  className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center text-2xl font-bold transition-all duration-500 group-hover:scale-110"
-                  style={{
-                    background: "linear-gradient(135deg, rgba(212,160,23,0.15), rgba(212,160,23,0.05))",
-                    border: "1px solid rgba(212,160,23,0.3)",
-                    fontFamily: "'Playfair Display', serif",
-                    animation: `pulse-gold 3s ease-in-out ${i * 0.5}s infinite`,
-                    color: "#d4a017",
-                  }}
-                >
-                  {step.n}
-                </div>
-                <h4 className="text-lg font-bold mb-3 text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
-                  {step.title}
-                </h4>
-                <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                  {step.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ ENTERPRISE SECTION ══ */}
-      <section id="entreprise" className="py-32 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            {/* Left visual */}
-            <motion.div
-              {...fadeUp(0)}
-              className="relative hidden lg:block"
-            >
-              <div className="luxury-card p-10 relative overflow-hidden">
-                {/* Mini dashboard mockup */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <p className="text-xs text-slate-400 mb-1">Livraisons ce mois</p>
-                    <p className="text-3xl font-bold gold-text" style={{ fontFamily: "var(--font-playfair), serif" }}>1 284</p>
-                  </div>
-                  <div className="w-12 h-12 rounded-2xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center">
-                    <BarChart3 size={22} className="text-gold-500" />
-                  </div>
-                </div>
-
-                {/* Bar chart */}
-                <div className="flex items-end gap-2 h-24 mb-6">
-                  {[40, 65, 45, 80, 60, 90, 75, 95, 70, 88, 62, 100].map((h, i) => (
-                    <motion.div
-                      key={i}
-                      className="flex-1 rounded-t-sm"
-                      style={{
-                        background: i === 11
-                          ? "linear-gradient(180deg, #d4a017, #b8860b)"
-                          : "rgba(212,160,23,0.2)",
-                      }}
-                      initial={{ height: 0 }}
-                      whileInView={{ height: `${h}%` }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.6, delay: i * 0.04, ease: "easeOut" }}
-                    />
-                  ))}
-                </div>
-
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { label: "À temps", value: "97.3%", color: "text-emerald-400" },
-                    { label: "En cours", value: "42", color: "text-blue-400" },
-                    { label: "Incidents", value: "0", color: "text-red-400" },
-                  ].map((m) => (
-                    <div key={m.label} className="luxury-card p-4 text-center">
-                      <p className={`text-xl font-bold ${m.color}`} style={{ fontFamily: "var(--font-playfair), serif" }}>{m.value}</p>
-                      <p className="text-xs text-slate-400 mt-1">{m.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Floating badge */}
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute -top-4 -right-4 luxury-card px-4 py-3 flex items-center gap-2"
-              >
-                <Truck size={16} className="text-gold-500" />
-                <span className="text-xs font-semibold text-slate-700 dark:text-white">Flotte dédiée</span>
-              </motion.div>
-            </motion.div>
-
-            {/* Right text */}
-            <motion.div {...fadeUp(0.15)}>
-              <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">
-                Entreprises
-              </p>
-              <h2
-                className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-8 leading-tight"
-                style={{ fontFamily: "var(--font-playfair), serif" }}
-              >
-                La logistique pensée pour les professionnels.
-              </h2>
-              <p className="text-slate-500 dark:text-slate-400 mb-10 leading-relaxed">
-                Accédez à un tableau de bord en temps réel, négociez des tarifs volumes, profitez d&apos;une API d&apos;intégration et d&apos;un gestionnaire de compte dédié.
-              </p>
-
-              <div className="space-y-4 mb-10">
-                {[
-                  "Tableau de bord analytics avancé",
-                  "Facturation mensuelle centralisée",
-                  "API REST pour e-commerce",
-                  "Gestionnaire de compte dédié",
-                  "SLA garanti 99.5% de disponibilité",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-3">
-                    <CheckCircle2 size={18} className="text-gold-500 shrink-0" />
-                    <span className="text-sm font-medium text-slate-600 dark:text-slate-300">{item}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="flex flex-wrap gap-4">
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="btn-gold px-7 py-3.5 text-sm"
-                >
-                  Contacter les ventes
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.03 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="btn-outline px-7 py-3.5 text-sm"
-                >
-                  Voir la documentation API
-                </motion.button>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ TESTIMONIALS ══ */}
-      <section className="py-32 border-y border-border-ui bg-navy-900/3 dark:bg-white/1">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-20">
-            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">
-              Témoignages
-            </p>
-            <h2
-              className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white mb-6"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              Ils nous font confiance
-            </h2>
-            <div className="section-divider" />
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={t.name}
-                {...fadeUp(i * 0.1)}
-                className="luxury-card-hover p-8"
-              >
-                {/* Stars */}
-                <div className="flex gap-1 mb-6">
-                  {Array.from({ length: t.rating }).map((_, j) => (
-                    <Star key={j} size={14} className="text-gold-400 fill-gold-400" />
-                  ))}
-                </div>
-                <p className="text-slate-600 dark:text-slate-300 leading-relaxed mb-8 text-sm italic">
-                  &ldquo;{t.text}&rdquo;
-                </p>
-                <div className="flex items-center gap-4">
-                  <div
-                    className="w-10 h-10 rounded-full flex items-center justify-center text-gold-900 font-bold text-sm shrink-0"
-                    style={{ background: "linear-gradient(135deg, #d4a017, #e8c245)" }}
-                  >
-                    {t.name.charAt(0)}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-slate-800 dark:text-white text-sm">{t.name}</p>
-                    <p className="text-xs text-slate-400">{t.role}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ CTA BAND ══ */}
-      <section className="py-32 relative overflow-hidden">
-        {/* Background */}
+      {/* ══════════════ STATS STRIP ══════════════ */}
+      <section className="py-14 border-y border-border-ui relative overflow-hidden">
         <div
           className="absolute inset-0 pointer-events-none"
-          style={{
-            background: "linear-gradient(135deg, #07111e 0%, #0d1b2e 40%, #1a2a40 100%)",
-          }}
+          style={{ background: "linear-gradient(90deg, rgba(212,160,23,0.03) 0%, transparent 50%, rgba(212,160,23,0.03) 100%)" }}
         />
-        {/* Gold glow */}
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] pointer-events-none"
-          style={{
-            background: "radial-gradient(ellipse, rgba(212,160,23,0.15) 0%, transparent 70%)",
-          }}
-        />
+        <div className="max-w-5xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {[
+            { target: 25, suffix: "+", label: "Années d'excellence" },
+            { target: 12, suffix: "", label: "Établissements" },
+            { target: 98, suffix: "%", label: "Satisfaction client" },
+            { target: 3, suffix: "★", label: "Restaurants gastronomiques" },
+          ].map((s, i) => (
+            <motion.div key={s.label} {...fadeUp(i * 0.1)}>
+              <div
+                className="text-4xl md:text-5xl font-bold mb-2"
+                style={{ fontFamily: "var(--font-playfair), serif", background: "linear-gradient(135deg,#d4a017,#f0d080)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}
+              >
+                <Counter target={s.target} suffix={s.suffix} />
+              </div>
+              <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{s.label}</p>
+            </motion.div>
+          ))}
+        </div>
+      </section>
 
-        <div className="relative z-10 max-w-4xl mx-auto px-4 text-center">
-          <motion.p {...fadeIn(0)} className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-6">
-            Commencez aujourd&apos;hui
-          </motion.p>
-          <motion.h2
-            {...fadeUp(0.1)}
-            className="text-4xl md:text-6xl font-extrabold text-white mb-8 leading-tight"
-            style={{ fontFamily: "var(--font-playfair), serif" }}
-          >
-            Prêt à expédier au Togo ?
-          </motion.h2>
-          <motion.p
-            {...fadeUp(0.2)}
-            className="text-slate-400 mb-12 text-lg max-w-xl mx-auto"
-          >
-            Rejoignez 50 000+ clients qui font confiance à Afrigo Express pour leurs envois.
-          </motion.p>
-          <motion.div
-            {...fadeUp(0.3)}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4"
-          >
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="btn-gold px-8 py-4 text-base w-full sm:w-auto"
+      {/* ══════════════ ABOUT ══════════════ */}
+      <section className="py-32 relative">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-20 items-center">
+          {/* Images collage */}
+          <motion.div {...fadeUp(0)} className="relative h-[560px] hidden lg:block">
+            <div className="absolute top-0 left-0 w-[65%] h-[70%] rounded-3xl overflow-hidden shadow-2xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://images.unsplash.com/photo-1549294413-26f195200c16?w=600&q=80" alt="Hotel lobby" className="w-full h-full object-cover" />
+            </div>
+            <div className="absolute bottom-0 right-0 w-[55%] h-[55%] rounded-3xl overflow-hidden shadow-2xl border-4 border-bg-main dark:border-navy-900">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="https://images.unsplash.com/photo-1455587734955-081b22074882?w=600&q=80" alt="Hotel pool" className="w-full h-full object-cover" />
+            </div>
+            {/* Floating badge */}
+            <motion.div
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute top-1/2 right-4 -translate-y-1/2 luxury-card p-5 text-center shadow-xl"
             >
-              Créer un envoi gratuit
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.96 }}
-              className="btn-outline px-8 py-4 text-base w-full sm:w-auto"
+              <div className="text-3xl font-bold gold-text mb-1" style={{ fontFamily: "var(--font-playfair), serif" }}>1998</div>
+              <p className="text-xs text-slate-400 font-medium">Fondé à Lomé</p>
+            </motion.div>
+          </motion.div>
+
+          {/* Text */}
+          <motion.div {...fadeUp(0.15)}>
+            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-5">Notre Histoire</p>
+            <h2
+              className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-8 leading-tight"
+              style={{ fontFamily: "var(--font-playfair), serif" }}
             >
-              Télécharger l&apos;app
+              Un art de vivre africain, une élégance universelle.
+            </h2>
+            <div className="w-14 h-0.5 mb-8" style={{ background: "linear-gradient(90deg,#d4a017,transparent)" }} />
+            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+              Depuis 1998, Bravia Hôtels incarne l&apos;hospitalité à son plus haut niveau sur le continent africain. Fondé à Lomé, notre groupe s&apos;est développé pour offrir une expérience unique — où le luxe contemporain rencontre la chaleur et la richesse culturelle africaines.
+            </p>
+            <p className="text-slate-500 dark:text-slate-400 leading-relaxed mb-10">
+              Chacun de nos 12 établissements est un sanctuaire pensé dans ses moindres détails : architecture singulière, gastronomie d&apos;exception, service personnalisé 24h/24.
+            </p>
+            {/* Amenities */}
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
+              {amenities.map((a) => (
+                <div key={a.label} className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-slate-300">
+                  <div className="w-9 h-9 rounded-xl bg-gold-500/10 border border-gold-500/20 flex items-center justify-center text-gold-500 shrink-0">
+                    {a.icon}
+                  </div>
+                  {a.label}
+                </div>
+              ))}
+            </div>
+            <motion.button whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="btn-gold px-8 py-4 text-sm">
+              Découvrir notre histoire
             </motion.button>
           </motion.div>
         </div>
       </section>
 
-      {/* ══ FOOTER ══ */}
-      <footer id="contact" className="bg-navy-950 dark:bg-[#030b13] border-t border-white/5 pt-20 pb-10">
+      {/* ══════════════ CHAMBRES & SUITES ══════════════ */}
+      <section id="chambres" className="py-32 border-t border-border-ui bg-slate-50/50 dark:bg-white/[0.01]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
+          <motion.div {...fadeUp(0)} className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
+            <div>
+              <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">Hébergement</p>
+              <h2
+                className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white leading-tight"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                Chambres & Suites
+              </h2>
+            </div>
+            <Link href="#" className="btn-outline px-6 py-3 text-sm shrink-0 inline-flex items-center gap-2">
+              Voir tout <ArrowRight size={14} />
+            </Link>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {rooms.map((room, i) => (
+              <RoomCard key={room.name} room={room} index={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ EXPERIENCES ══════════════ */}
+      <section id="experiences" className="py-32 relative overflow-hidden" style={{ background: "linear-gradient(180deg, #07111e 0%, #0d1b2e 100%)" }}>
+        {/* Gold glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] pointer-events-none"
+          style={{ background: "radial-gradient(ellipse, rgba(212,160,23,0.08) 0%, transparent 70%)" }}
+        />
+
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeUp(0)} className="text-center max-w-2xl mx-auto mb-20">
+            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">Art de vivre</p>
+            <h2
+              className="text-4xl md:text-5xl font-bold text-white mb-6"
+              style={{ fontFamily: "var(--font-playfair), serif" }}
+            >
+              Des expériences <em className="not-italic gold-text">inoubliables</em>
+            </h2>
+            <div className="w-14 h-0.5 mx-auto" style={{ background: "linear-gradient(90deg,transparent,#d4a017,transparent)" }} />
+          </motion.div>
+
+          <div className="grid lg:grid-cols-3 gap-6">
+            {experiences.map((exp, i) => (
+              <motion.div
+                key={exp.title}
+                {...fadeUp(i * 0.12)}
+                className="group relative rounded-3xl overflow-hidden cursor-pointer h-[480px]"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={exp.img} alt={exp.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <div className={`absolute inset-0 bg-gradient-to-t ${exp.color} to-transparent`} />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Content */}
+                <div className="absolute bottom-0 left-0 right-0 p-8">
+                  <div className="w-12 h-12 rounded-2xl mb-4 flex items-center justify-center text-gold-400"
+                    style={{ background: "rgba(212,160,23,0.15)", border: "1px solid rgba(212,160,23,0.3)" }}
+                  >
+                    {exp.icon}
+                  </div>
+                  <p className="text-gold-400 text-xs font-semibold tracking-widest uppercase mb-2">{exp.subtitle}</p>
+                  <h3 className="text-2xl font-bold text-white mb-3" style={{ fontFamily: "var(--font-playfair), serif" }}>
+                    {exp.title}
+                  </h3>
+                  <p className="text-white/60 text-sm leading-relaxed mb-5 opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-500">
+                    {exp.desc}
+                  </p>
+                  <div className="flex items-center gap-2 text-gold-400 text-sm font-semibold">
+                    Explorer <ArrowRight size={14} className="transition-transform group-hover:translate-x-2 duration-300" />
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ TESTIMONIALS ══════════════ */}
+      <section className="py-32 relative overflow-hidden">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
+          <motion.div {...fadeUp(0)} className="mb-16">
+            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">Témoignages</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
+              Ce qu&apos;ils disent de nous
+            </h2>
+          </motion.div>
+
+          {/* Testimonial slider */}
+          <div className="relative min-h-[220px]">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTestimonial}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5 }}
+                className="luxury-card p-10 text-center"
+              >
+                <div className="flex justify-center gap-1 mb-6">
+                  {[...Array(testimonials[activeTestimonial].rating)].map((_, i) => (
+                    <Star key={i} size={16} className="fill-gold-400 text-gold-400" />
+                  ))}
+                </div>
+                <blockquote
+                  className="text-xl md:text-2xl font-medium text-slate-700 dark:text-slate-200 mb-8 leading-relaxed italic"
+                  style={{ fontFamily: "var(--font-playfair), serif" }}
+                >
+                  &ldquo;{testimonials[activeTestimonial].text}&rdquo;
+                </blockquote>
+                <p className="font-bold text-slate-900 dark:text-white">{testimonials[activeTestimonial].name}</p>
+                <p className="text-sm text-slate-400 flex items-center justify-center gap-1.5 mt-1">
+                  <MapPin size={12} /> {testimonials[activeTestimonial].country}
+                </p>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Controls */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <button onClick={() => setActiveTestimonial((p) => (p - 1 + testimonials.length) % testimonials.length)}
+              className="w-10 h-10 rounded-full border border-border-ui flex items-center justify-center hover:border-gold-400 transition-colors">
+              <ChevronLeft size={16} />
+            </button>
+            <div className="flex gap-2">
+              {testimonials.map((_, i) => (
+                <button key={i} onClick={() => setActiveTestimonial(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${i === activeTestimonial ? "bg-gold-500 w-6" : "bg-slate-300 dark:bg-slate-600"}`}
+                />
+              ))}
+            </div>
+            <button onClick={() => setActiveTestimonial((p) => (p + 1) % testimonials.length)}
+              className="w-10 h-10 rounded-full border border-border-ui flex items-center justify-center hover:border-gold-400 transition-colors">
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ GALLERY ══════════════ */}
+      <section id="galerie" className="py-32 border-t border-border-ui bg-slate-50/50 dark:bg-white/[0.01]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div {...fadeUp(0)} className="text-center mb-16">
+            <p className="text-gold-500 font-semibold uppercase text-xs tracking-[0.2em] mb-4">Galerie</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white" style={{ fontFamily: "var(--font-playfair), serif" }}>
+              L&apos;hôtel en images
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-3 grid-rows-2 gap-4 h-[500px]">
+            {galleryImages.map((img, i) => (
+              <motion.div
+                key={i}
+                {...fadeIn(i * 0.08)}
+                className={`overflow-hidden rounded-2xl group cursor-pointer ${img.span}`}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.src}
+                  alt={`Gallery ${i + 1}`}
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════ CTA ══════════════ */}
+      <section className="py-40 relative overflow-hidden">
+        {/* Background */}
+        <div className="absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=1600&q=80" alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, rgba(7,17,30,0.92) 0%, rgba(13,27,46,0.85) 100%)" }} />
+        </div>
+        <div className="relative z-10 max-w-3xl mx-auto px-4 text-center">
+          <motion.p {...fadeIn(0)} className="text-gold-400 font-semibold uppercase text-xs tracking-[0.2em] mb-6">Offre exclusive</motion.p>
+          <motion.h2
+            {...fadeUp(0.1)}
+            className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight"
+            style={{ fontFamily: "var(--font-playfair), serif" }}
+          >
+            Réservez en direct,<br />économisez jusqu&apos;à 20%
+          </motion.h2>
+          <motion.p {...fadeUp(0.2)} className="text-white/60 text-lg mb-12 max-w-xl mx-auto">
+            Petit-déjeuner inclus, annulation gratuite et accès prioritaire au spa pour toute réservation directe.
+          </motion.p>
+          <motion.div {...fadeUp(0.3)} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="btn-gold px-10 py-4 text-sm w-full sm:w-auto">
+              Réserver maintenant
+            </motion.button>
+            <motion.button whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="btn-outline px-10 py-4 text-sm w-full sm:w-auto">
+              Voir les offres
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ══════════════ FOOTER ══════════════ */}
+      <footer className="bg-[#030b13] border-t border-white/5 pt-24 pb-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
             {/* Brand */}
-            <div className="md:col-span-2">
-              <Link href="/" className="flex items-center gap-3 mb-6">
-                <div className="relative w-9 h-9">
-                  <Image src="/brand/logo.jpeg" alt="Afrigo Express" fill sizes="36px" className="object-contain rounded-xl" />
-                </div>
-                <span style={{ fontFamily: "var(--font-playfair), serif" }} className="font-bold text-white">
-                  AFRIGO<span className="text-gold-500">EXPRESS</span>
-                </span>
-              </Link>
-              <p className="text-slate-500 text-sm leading-relaxed max-w-xs mb-8">
-                La plateforme logistique premium au Togo. Rapide, sécurisée, innovante.
+            <div className="lg:col-span-2">
+              <div className="mb-6">
+                <div className="font-bold text-2xl text-white tracking-[0.15em]" style={{ fontFamily: "var(--font-playfair), serif" }}>BRAVIA</div>
+                <div className="text-[9px] tracking-[0.4em] text-gold-500 font-medium uppercase">Hôtels & Resorts</div>
+              </div>
+              <p className="text-slate-500 text-sm leading-relaxed mb-8 max-w-xs">
+                Une collection d&apos;hôtels de luxe qui célèbre le meilleur de l&apos;hospitalité africaine, avec élégance et raffinement.
               </p>
-              <div className="flex flex-col gap-3 text-sm text-slate-500">
-                <div className="flex items-center gap-3">
-                  <Phone size={15} className="text-gold-500 shrink-0" />
-                  <span>+228 90 00 00 00</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <Mail size={15} className="text-gold-500 shrink-0" />
-                  <span>contact@afrigoexpress.tg</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <MapPin size={15} className="text-gold-500 shrink-0" />
-                  <span>Lomé, République Togolaise</span>
-                </div>
+              {/* Newsletter */}
+              <div className="flex gap-2 mb-8">
+                <input
+                  type="email"
+                  placeholder="Votre adresse email"
+                  className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-slate-600 outline-none focus:border-gold-500/50 transition-colors"
+                />
+                <button className="btn-gold px-4 py-2.5 text-xs font-bold shrink-0">S&apos;abonner</button>
+              </div>
+              {/* Social */}
+              <div className="flex gap-3">
+                {[Instagram, Facebook, Twitter, Youtube].map((Icon, i) => (
+                  <Link key={i} href="#"
+                    className="w-9 h-9 rounded-xl border border-white/10 flex items-center justify-center text-slate-500 hover:text-gold-400 hover:border-gold-400/30 transition-all"
+                  >
+                    <Icon size={15} />
+                  </Link>
+                ))}
               </div>
             </div>
 
-            {/* Services */}
+            {/* Liens */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-6">Services</h4>
-              <ul className="space-y-3 text-sm text-slate-500">
-                {["Livraison Express", "Suivi Colis", "Paiement Mobile", "Livraison Entreprise", "API Intégration"].map((l) => (
+              <h4 className="text-white font-semibold text-xs tracking-[0.15em] uppercase mb-6">L&apos;hôtel</h4>
+              <ul className="space-y-3">
+                {["Notre histoire", "Chambres & Suites", "Gastronomie", "Spa & Wellness", "Événements", "Galerie"].map((l) => (
                   <li key={l}>
-                    <Link href="#" className="hover:text-gold-400 transition-colors">{l}</Link>
+                    <Link href="#" className="text-slate-500 text-sm hover:text-gold-400 transition-colors">{l}</Link>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Legal */}
+            {/* Contact */}
             <div>
-              <h4 className="text-white font-semibold text-sm mb-6">Légal</h4>
-              <ul className="space-y-3 text-sm text-slate-500">
-                {["Conditions d'utilisation", "Politique de confidentialité", "Cookies", "FAQ", "Presse"].map((l) => (
-                  <li key={l}>
-                    <Link href="#" className="hover:text-gold-400 transition-colors">{l}</Link>
-                  </li>
-                ))}
+              <h4 className="text-white font-semibold text-xs tracking-[0.15em] uppercase mb-6">Contact</h4>
+              <ul className="space-y-4">
+                <li className="flex items-start gap-3 text-sm text-slate-500">
+                  <MapPin size={14} className="text-gold-500 shrink-0 mt-0.5" />
+                  <span>Boulevard du Mono, Lomé<br />République Togolaise</span>
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-500">
+                  <Phone size={14} className="text-gold-500 shrink-0" />
+                  +228 22 00 00 00
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-500">
+                  <Mail size={14} className="text-gold-500 shrink-0" />
+                  reservations@bravia.tg
+                </li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-600">
-            <p>© {new Date().getFullYear()} Afrigo Express. Tous droits réservés. Propulsé par Kelvix.</p>
-            <p>Conçu avec passion au Togo 🇹🇬</p>
+            <p>© {new Date().getFullYear()} Bravia Hôtels & Resorts. Tous droits réservés.</p>
+            <div className="flex gap-6">
+              {["Mentions légales", "Confidentialité", "Cookies", "FAQ"].map((l) => (
+                <Link key={l} href="#" className="hover:text-gold-400 transition-colors">{l}</Link>
+              ))}
+            </div>
           </div>
         </div>
       </footer>
